@@ -5,6 +5,7 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 
+import configparser
 import gflags
 
 FLAGS = gflags.FLAGS
@@ -20,30 +21,32 @@ class AuctionEmulatorEnv(gym.Env):
             file_in: Dataset input file
         Populates the bid requests to self.bids list.
         """
-        fin = open(file_in, 'r')
         self._step = 0
-        self.bids = []
-        for bid in fin:
-            bid_vals = bid.split(" ")
-            self.bids.append(bid_vals) 
-        self.num_episodes = len(self.bids)
-        fin.close()
+        with open(file_in, 'r') as f:
+            self.bid_requests = [br.rstrip('\n').split('\t') for br in f]
+        self.num_episodes = len(self.bid_requests)
 
+    def _load_config(self):
+        cfg = configparser.ConfigParser()
+        cfg.read('./config.cfg')
+        self.bid_request_fields = {}
+        for item in cfg['bid_request']:
+            self.bid_request_fields[item] = int(cfg['bid_request'][item])
 
     def _get_bid_fields(self):
-        self.mkt_price = bid_request[FLAGS.market_price]
-        self.click = bid_request[FLAGS.click]
-        self.conversion = bid_request[FLAGS.conversion]
+        self.mkt_price = self.bid_request[FLAGS.market_price]
+        self.click = self.bid_request[FLAGS.click]
+        self.conversion = self.bid_request[FLAGS.conversion]
  
     def reset(self):
         """
         Reset the OpenAI Gym Auction Emulator environment.
         """
         self._step = 0
-        bid_request = self.bids[self._step]
+        self.bid_request = self.bids[self._step]
         self._get_bid_fields()
         self._step += 1
-        return bid_request
+        return self.bid_request
 
     def step(self, action):
         """
@@ -55,7 +58,7 @@ class AuctionEmulatorEnv(gym.Env):
             win_impression = 1
             user_click = self.click
             user_conversion = self.conversion
-        bid_request = self.bids[self._step]
+        self.bid_request = self.bids[self._step]
         self._get_bid_fields()
         self._step += 1
         done = self._step >= self.num_episodes
@@ -67,4 +70,4 @@ class AuctionEmulatorEnv(gym.Env):
         pass
 
     def close(self):
-        self.bids = [] 
+        self.bids = []
