@@ -6,68 +6,72 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 
 import configparser
-import gflags
-
-FLAGS = gflags.FLAGS
+import os
 
 class AuctionEmulatorEnv(gym.Env):
     """
-    AuctionEmulatorEnv can be used with Open AI Gym Env and is used to generate
-    the bid requests reading the dataset files.
-    """
-    def __init__(self, file_in):
-        """
-        Args:
-            file_in: Dataset input file
-        Populates the bid requests to self.bids list.
-        """
-        self._step = 0
-        with open(file_in, 'r') as f:
-            self.bid_requests = [br.rstrip('\n').split('\t') for br in f]
-        self.num_episodes = len(self.bid_requests)
+    AuctionEmulatorEnv can be used with Open AI Gym Env and is used to generate
+    the bid requests reading the iPinYou dataset files.
+    Toy data set with 100 lines are included in the data directory.
+    """
+    metadata = {'render.modes': ['human']}
 
     def _load_config(self):
+        """
+        Parse the config.cfg file
+        """
         cfg = configparser.ConfigParser()
-        cfg.read('./config.cfg')
-        self.bid_request_fields = {}
-        for item in cfg['bid_request']:
-            self.bid_request_fields[item] = int(cfg['bid_request'][item])
+        env_dir = os.path.dirname(__file__)
+        cfg.read(env_dir + '/config.cfg')
+        # print(cfg['data']['dtype'])
+        if cfg['data']['dtype'] == 'ipinyou':
+            self.file_in = env_dir + '/../../../../data/ipinyou/data.txt'
+        self.bidprice = int(cfg['data']['bidprice'])
+        self.payprice = int(cfg['data']['payprice'])
 
-    def _get_bid_fields(self):
-        self.mkt_price = self.bid_request[FLAGS.market_price]
-        self.click = self.bid_request[FLAGS.click]
-        self.conversion = self.bid_request[FLAGS.conversion]
+    def __init__(self):
+        """
+        Args:
+        Populates the bid requests to self.bid_requests list.
+        """
+        self._load_config()
+        self._step = 1
+        with open(self.file_in, 'r') as f:
+            self.bid_requests = [br.rstrip('\n').split('\t') for br in f.readlines()]
+        self.num_bids = len(self.bid_requests)
  
     def reset(self):
         """
-        Reset the OpenAI Gym Auction Emulator environment.
-        """
-        self._step = 0
-        self.bid_request = self.bids[self._step]
-        self._get_bid_fields()
-        self._step += 1
-        return self.bid_request
+        Reset the OpenAI Gym Auction Emulator environment.
+        """
+        self._step = 1
+        return self.bid_requests[self._step], 0, False
 
     def step(self, action):
         """
-        Args:
-            action: bid response (bid_price)
-        """
-        bid_price = action #TODO: bid_price for now.
-        if bid_price >= self.mkt_price:
-            win_impression = 1
-            user_click = self.click
-            user_conversion = self.conversion
-        self.bid_request = self.bids[self._step]
-        self._get_bid_fields()
+        Args:
+            action: bid response (bid_price)
+        Reward is computed using the bidprice to payprice difference.
+        """
+        done = False
+        state = None
+        r = 0
+        if self._step < self.num_bids - 1:
+            state =  self.bid_requests[self._step]
+            if action:
+                r = int(self.bid_requests[self._step][self.bidprice]) - \
+                    int(self.bid_requests[self._step][self.payprice])
+        else:
+            done = True
         self._step += 1
-        done = self._step >= self.num_episodes
+        return state, r, done
 
-        return done, win_impression, user_click, user_conversion
-
-
-    def render(self, mode='human'):
+    def render(self, mode='human', close=False):
         pass
 
     def close(self):
-        self.bids = []
+        pass
+
+
+
+

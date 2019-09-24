@@ -1,1 +1,6 @@
-from gym_auction_emulaor.envs.auction_emulator_env import AuctionEmulatorEnv
+from gym.envs.registration import register
+
+register(
+    id='AuctionEmulator-v0',
+    entry_point='gym_auction_emulator.envs:AuctionEmulatorEnv',
+)
