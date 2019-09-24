@@ -22,4 +22,3 @@ while not done:
     next_state, reward, done = env.step(action)
     if not done:
         print(next_state, reward, done)
-    
