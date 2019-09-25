@@ -1,3 +1,9 @@
+"""
+Run this module inside Budget_Constrained_Bidding directory
+%python3 src/rtb_agent/constant_bid_agent.py
+"""
+import sys,os
+sys.path.append(os.getcwd()+'/src/gym-auction_emulator')
 import gym, gym_auction_emulator
 
 """
