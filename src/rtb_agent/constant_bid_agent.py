@@ -18,13 +18,14 @@ budget = 100
 env = gym.make('AuctionEmulator-v0')
 
 state, done = env.reset(), False
+
 while not done:
     # action = bid amount
     if budget:
-        action = 1
+        action = env.target_price * env.
     else:
         action = 0
-    budget -= 1
+    budget -= env.payprice
     next_state, reward, done = env.step(action)
     if not done:
         print(next_state, reward, done)

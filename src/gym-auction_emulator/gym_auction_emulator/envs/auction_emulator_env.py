@@ -25,9 +25,10 @@ class AuctionEmulatorEnv(gym.Env):
         cfg.read(env_dir + '/config.cfg')
         # print(cfg['data']['dtype'])
         if cfg['data']['dtype'] == 'ipinyou':
-            self.file_in = env_dir + '/../../../../data/ipinyou/data.txt'
-        self.bidprice = int(cfg['data']['bidprice'])
-        self.payprice = int(cfg['data']['payprice'])
+            self.file_in = env_dir + str(cfg['data']['ipinyou_path'])
+        self.idx_click = int(cfg['data']['idx_click'])
+        self.idx_bidprice = int(cfg['data']['idx_bidprice'])
+        self.idx_payprice = int(cfg['data']['idx_payprice'])
 
     def __init__(self):
         """
@@ -39,6 +40,8 @@ class AuctionEmulatorEnv(gym.Env):
         with open(self.file_in, 'r') as f:
             self.bid_requests = [br.rstrip('\n').split('\t') for br in f.readlines()]
         self.num_bids = len(self.bid_requests)
+        self.bidprice = 0
+        self.payprice = 0
  
     def reset(self):
         """
@@ -56,11 +59,13 @@ class AuctionEmulatorEnv(gym.Env):
         done = False
         state = None
         r = 0
+        self.bidprice = int(self.bid_requests[self._step][self.idx_bidprice])
+        self.payprice = int(self.bid_requests[self._step][self.idx_payprice])
+        self.click = int(self.bid_requests[self._step][self.idx_click])
         if self._step < self.num_bids - 1:
             state =  self.bid_requests[self._step]
             if action:
-                r = int(self.bid_requests[self._step][self.bidprice]) - \
-                    int(self.bid_requests[self._step][self.payprice])
+                r = self.click                   
         else:
             done = True
         self._step += 1
