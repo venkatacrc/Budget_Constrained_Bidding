@@ -12,20 +12,16 @@ This is an example to show the OpenAI gym interface for the
     Budget Constrained Bidding problem.
 """
 
-# initial budget
-budget = 100
-
 env = gym.make('AuctionEmulator-v0')
 
-state, done = env.reset(), False
+# Reset the environment
+state, reward, done = env.reset()
+# print(state)
 
 while not done:
     # action = bid amount
-    if budget:
-        action = env.target_price * env.
-    else:
-        action = 0
-    budget -= env.payprice
+    action = env.act(state)
     next_state, reward, done = env.step(action)
-    if not done:
-        print(next_state, reward, done)
+    state = next_state # Next state assigned to current state
+
+print("Total Clicks won with Budget={} amount = {}".format(env.budget, env.clicks_won))
