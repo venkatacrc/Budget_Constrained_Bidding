@@ -8,36 +8,29 @@ Open AI Gym environment mimics the Ad Exchange by taking the bid requests from t
 ### Configuration parameters
 
 Set the `dataset_path` to the absolute data set path location.
-Set `metrics` to impressions, views, clicks, installs, conversions etc. 
+<br />Set `metrics` to impressions, views, clicks, installs, conversions etc. 
 
 
-## Reinforcement Learning(RL) Agent
+## Reinforcement Learning (RL) Agent
 The RL agent models the state by spilitting the entire day (24 Hours) into time steps, T, typically 15 minutes.
 
 
 ### Configuration paraemters
 Set `T` to the time step duration.
-Set `ACTION_SIZE` to the number of discrete positive and negative steps to control the bid impression price. 
+<br />Set `ACTION_SIZE` to the number of discrete positive and negative steps to control the bid impression price. 
+
 [Here](http://bit.ly/AdTechRTB) are the slides for RTB project.
 
 ---
 
 ## How to Use:
 Use the following command to run the Linear Bidding Agent.
-
+<br />
 ```bash scripts/run_lin_bid.sh```
 
 Use the following command to run the RL Bidding Agent.
-
-```bash scripts/run_rl_bid.sh```
+<br />```bash scripts/run_rl_bid.sh```
 
 ## Repository Citations
 
-@misc{wu2018budget,
-  title={Budget constrained bidding by model-free reinforcement learning in display advertising},
-  author={Wu, Di and Chen, Xiujun and Yang, Xun and Wang, Hao and Tan, Qing and Zhang, Xiaoxun and Xu, Jian and Gai, Kun},
-  booktitle={Proceedings of the 27th ACM International Conference on Information and Knowledge Management},
-  pages={1443--1451},
-  year={2018},
-  organization={ACM}
-}
+[Wu, Di, et al. "Budget constrained bidding by model-free reinforcement learning in display advertising." Proceedings of the 27th ACM International Conference on Information and Knowledge Management. ACM, 2018.](https://arxiv.org/pdf/1802.08365)
