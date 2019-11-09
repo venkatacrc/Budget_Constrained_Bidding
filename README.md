@@ -24,6 +24,12 @@ Set `T` to the time step duration.
 ---
 
 ## How to Use:
+
+Note: The code was used with a private dataset from large mobile DSP company.
+I removed all the instances to the private dataset and added iPinYou public dataset.
+iPinYou does not have all the required columns and this code may not run.
+If you are adapting this code for your projects and have questions. Drop me an [email](venkatc77@gmail.com).
+
 Use the following command to run the Linear Bidding Agent.
 <br />
 ```bash scripts/run_lin_bid.sh```
